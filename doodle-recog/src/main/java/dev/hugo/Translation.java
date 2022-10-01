@@ -24,6 +24,14 @@ public class Translation {
 		return 1;
 	}
 	
+	public double getWeight() {
+		return weight;
+	}
+	
+	public double getBias() {
+		return bias;
+	}
+	
 	public void setWeight(double weight) {
 		this.weight = weight;
 	}

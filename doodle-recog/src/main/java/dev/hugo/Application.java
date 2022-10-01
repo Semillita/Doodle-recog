@@ -2,12 +2,20 @@ package dev.hugo;
 
 import static java.lang.Math.*;
 
+import java.util.List;
+
 public class Application {
 
 	public static void main(String[] args) {
 		// 33:52
 		var sigmoid = getSigmoidFunc();
 		var reLu = getReLuFunc();
+		
+		
+	}
+	
+	private static List<Double> deriveCostRespectToNodes(List<Translation> goingIn) {
+		
 	}
 	
 	private static Func getSigmoidFunc() {
