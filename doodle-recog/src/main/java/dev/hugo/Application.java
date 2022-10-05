@@ -67,10 +67,10 @@ public class Application {
 		return secondNodeCost * activation.derive(translatedValue);
 	}
 
-	private static TranslationCost getTranslationCost(double baseNodeValue, double translatedCost) {
+	private static TranslationCostSlope getTranslationCost(double baseNodeValue, double translatedCost) {
 		var weightCost = baseNodeValue * translatedCost;
 		var biasCost = translatedCost;
-		return new TranslationCost(weightCost, biasCost);
+		return new TranslationCostSlope(weightCost, biasCost);
 	}
 
 	private static double getCost(double expected, double actual) {
