@@ -1,9 +1,17 @@
 package dev.hugo;
 
+import java.util.Random;
+
 public class Translation {
 
 	private double weight;
 	private double bias;
+	
+	public Translation() {
+		var random = new Random();
+		weight = random.nextDouble() - 0.5;
+		bias = random.nextDouble() - 0.5;
+	}
 	
 	public Translation(double weight, double bias) {
 		this.weight = weight;
@@ -14,13 +22,17 @@ public class Translation {
 		return input * weight + bias;
 	}
 
+	public double deriveRespectToVariable() {
+		return weight;
+	}
+	
 	/**Derive with respect to weight*/
 	public double deriveRespectToWeight(double input) {
 		return input;
 	}
 
 	/**Derive with respect to bias*/
-	public double deriveRespectToBias(double input) {
+	public double deriveRespectToBias() {
 		return 1;
 	}
 	
