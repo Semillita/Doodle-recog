@@ -2,6 +2,8 @@ package dev.hugo;
 
 import static java.lang.Math.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -17,7 +19,8 @@ public class Application {
 		
 		var input = new double[] {0, 0.4, 0.9};
 		var expectedOutput = new double[] {1, 0};
-		var output = feedForward(input, layers);
+		var result = feedForward(input, layers);
+		var output = result[layers.size()];
 		
 		var cost0 = getCost(expectedOutput[0], output[0]);
 		var cost1 = getCost(expectedOutput[1], output[1]);
@@ -25,20 +28,21 @@ public class Application {
 		System.out.println("Cost 0: " + cost0);
 		System.out.println("Cost 1: " + cost1);
 		
-//		for (var num : output) {
-//			System.out.println(num);
-//		}
-		
 	}
 
-	private static double[] feedForward(double[] values, List<Layer> layers) {
+	private static double[][] feedForward(double[] values, List<Layer> layers) {
+		// Create list of values for all the layers, including input and results
+		var nodeValues = new double[layers.size() + 1][];
+		// Add input layer values to cache
 		for (int index = 0; index < layers.size(); index++) {
+			nodeValues[index] = values;
 			var layer = layers.get(index);
 			var nextLayerValues = getNextLayerValues(values, layer.getTranslations(), layer.getActivation());
 			values = nextLayerValues;
 		}
+		nodeValues[layers.size()] = values;
 		
-		return values;
+		return nodeValues;
 	}
 
 	private static double[] getNextLayerValues(double[] previousLayerValues, Translation[][] translations,
