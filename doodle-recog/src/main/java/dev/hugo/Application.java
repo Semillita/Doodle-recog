@@ -57,17 +57,17 @@ public class Application {
 		return nextLayer;
 	}
 
-	private static double getNodeCost(double translatedCost, Translation translation) {
+	private static double getNodeCostSlope(double translatedCost, Translation translation) {
 		return translation.deriveRespectToVariable() * translatedCost;
 	}
 
-	private static double getTranslatedCost(double firstNodeValue, double secondNodeCost, Translation translation,
+	private static double getTranslatedCostSlope(double firstNodeValue, double secondNodeCost, Translation translation,
 			Func activation) {
 		var translatedValue = translation.apply(firstNodeValue);
 		return secondNodeCost * activation.derive(translatedValue);
 	}
 
-	private static TranslationCostSlope getTranslationCost(double baseNodeValue, double translatedCost) {
+	private static TranslationCostSlope getTranslationCostSlope(double baseNodeValue, double translatedCost) {
 		var weightCost = baseNodeValue * translatedCost;
 		var biasCost = translatedCost;
 		return new TranslationCostSlope(weightCost, biasCost);
