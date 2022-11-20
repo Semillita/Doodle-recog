@@ -7,27 +7,72 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class Application {
+public class App {
 
 	public static void main(String[] args) {
-		var inputNodeAmount = 3;
-		var outputNodeAmount = 2;
-		var layerSizes = new int[] { inputNodeAmount, 4, outputNodeAmount };
+		// Seriösa grejer:
+		final int TRAIN_SIZE = 100, LAPS = 100;
+		final int TEST_SIZE = 50, TEST_OFFSET = TRAIN_SIZE;
+
+		var layerSizes = new int[] { 28 * 28, 100, 10 };
 
 		var layers = IntStream.range(0, layerSizes.length - 1)
 				.mapToObj(index -> new Layer(getReLuFunc(), layerSizes[index], layerSizes[index + 1])).toList();
+
+		var imageFile = IdxParser.getImageFile("/train-images.idx3-ubyte").orElseThrow();
+		var labelFile = IdxParser.getLabelFile("/train-labels.idx1-ubyte").orElseThrow();
+
+		var images = IntStream.range(0, TRAIN_SIZE)
+				.mapToObj(i -> imageFile.getImageAt(i)).toList();
 		
-		var input = new double[] {0, 0.4, 0.9};
-		var expectedOutput = new double[] {1, 0};
-		var result = feedForward(input, layers);
-		var output = result[layers.size()];
+		var labels = IntStream.range(0, TRAIN_SIZE)
+				.mapToObj(i -> labelFile.getLabelAt(i)).toList();
 		
-		var cost0 = getCost(expectedOutput[0], output[0]);
-		var cost1 = getCost(expectedOutput[1], output[1]);
-		
-		System.out.println("Cost 0: " + cost0);
-		System.out.println("Cost 1: " + cost1);
-		
+		for (int lap = 0; lap < LAPS; lap++) {
+			var caches = new FeedCache[TRAIN_SIZE];
+			// Feedforward
+			for (int i = 0; i < TRAIN_SIZE; i++) {
+				var image = images.get(i);
+				var input = flattenRasterToDoubles(image);
+				var nodeValues = feedForward(input, layers);
+				var cacheList = new ArrayList<List<Double>>();
+				for (int x = 0; x < nodeValues.length; x++) {
+					var l = new ArrayList<Double>();
+					var layerValues = nodeValues[x];
+					for (var d : layerValues) {
+						l.add(d);
+					}
+					cacheList.add(l);
+				}
+				var cache = new FeedCache(cacheList);
+				caches[i] = cache;
+			}
+			// Back prop
+		}
+	}
+
+	private static void printRaster(int[][] raster) {
+		for (int y = 27; y >= 0; y--) {
+			System.out.print("[" + ((y < 10) ? (y + " ") : y) + ":");
+			for (int x = 0; x < 28; x++) {
+				System.out.print((raster[x][y] > 0) ? "#" : " ");
+				if (x != 27)
+					System.out.print("");
+			}
+			System.out.println("]");
+		}
+		System.out.println("[---0123456789012345678901234567]");
+	}
+
+	private static double[] flattenRasterToDoubles(int[][] raster) {
+		var array = new double[28 * 28];
+		for (int x = 0; x < 28; x++) {
+			for (int y = 0; y < 28; y++) {
+				array[x * 28 + y] = (double) raster[x][y];
+			}
+		}
+		var a = Arrays.stream(raster).flatMapToDouble(row -> IntStream.of(row).mapToDouble(i -> i)).toArray();
+		return a;
 	}
 
 	private static double[][] feedForward(double[] values, List<Layer> layers) {
@@ -41,7 +86,7 @@ public class Application {
 			values = nextLayerValues;
 		}
 		nodeValues[layers.size()] = values;
-		
+
 		return nodeValues;
 	}
 
