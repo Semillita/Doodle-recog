@@ -20,15 +20,23 @@ public class Application {
 				.from(int[][].class)
 				.training(trainingImages)
 				.testing(testingImages)
+				.layer(this::inputMapping, firstLayer())
+				.
 				
-				.layer(this::firstLayer)
+				//.layer(this::firstLayer)
+				
+				// layer 0, translation 0, activation 0, layer 1, translation 1, activation 1, ...
 				
 				// kanske typ .layer(..., amount)
 				// eller .layer(...).amount(...)
 				// kan vilja ha typ .translate(...)
 	}
 	
-	public Layer<int[][], Double> firstLayer() {
+	public List<Double> inputMapping(int[][] input) {
+		return List.of();
+	}
+	
+	public Layer<Double> firstLayer() {
 		return null;
 	}
 	

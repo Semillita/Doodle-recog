@@ -2,6 +2,7 @@ package dev.hugo.nn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class InputSpec<T> {
@@ -19,10 +20,14 @@ public class InputSpec<T> {
 		return this;
 	}
 	
-	public <U, R> LayerSpec<T, U, R, T> layer(Supplier<Layer<T, U, R>> firstLayer) {
-		var layer = firstLayer.get();
-		var layers = new ArrayList<Layer<?, ?, ?>>(List.of(layer)).stream().toList();
-		return new LayerSpec<T, U, R, T>(this, layers);
+//	public <U, R> LayerSpec<T, U, R, T> layer(Supplier<Layer<T, U, R>> firstLayer) {
+//		var layer = firstLayer.get();
+//		var layers = new ArrayList<Layer<?, ?, ?>>(List.of(layer)).stream().toList();
+//		return new LayerSpec<T, U, R, T>(this, layers);
+//	}
+	
+	public <R> LayerDetailSpec<R> layer(Function<T, List<R>> mapping, Layer<R> target) {
+		return null;
 	}
 	
 }
